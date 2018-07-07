@@ -2,4 +2,3 @@ cryptography==2.1.4
 gunicorn==19.8.1
 Flask_Ask==0.9.8
 Flask==0.12.1
-redis==2.10.6
