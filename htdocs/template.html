@@ -106,17 +106,26 @@
     color: #4aba70;
   }
   </style>
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
   <div class="jumbotron text-center">
     <h1>Smart Home Inventory</h1>
-    <p>Works with alexa, say <i>"Alexa, launch inventory"</i></p> 
+    {% if title is defined %}
+      <p>{{ title }}</p>
+    {% else %}
+      <p>Works with alexa, say <i>"Alexa, launch inventory"</i></p> 
+    {% endif %}
   </div>
   <!-- Main -->
   {{main_data|safe}}
   <!-- End of Main -->
   <!-- JS -->
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip(); 
+    });
+  </script>
 </body>
 </html>
