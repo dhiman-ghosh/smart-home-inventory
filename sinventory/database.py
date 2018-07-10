@@ -15,31 +15,38 @@ class Database:
         query = None
         dict_ = self.__dict__.copy()
         dict_.pop('_table_name')
-        print(dict_)
         for key, value in dict_.items():
             values.append(value)
         values = str(str(values).rstrip(']')).lstrip( '[' )
         query = "INSERT INTO " + self._table_name + " VALUES (" + values + ");"
         print("Query: " + query)
-        self.__execute(query)
+        self.__execute(query, False)
 
     def _update(self):
         pass
 
-    def _delete(self):
-        for key, value in __dict__.items():
-            if key is "alexa_id":
-                query = "DELETE FROM " + self._table_name + " WHERE " + key + " = " + value + ");"
-        print("Query: " + query)
-        self.__execute(query)
+    def _delete(self, value):
+      self._value = value;
+      query = "select kc.column_name from information_schema.table_constraints tc, information_schema.key_column_usage kc where tc.constraint_type = 'PRIMARY KEY'";
+      cur = Database.conn.cursor()
+      cur.execute(query)
+      primary_key = cur.fetchone()
+      key = str(str(primary_key).rstrip('\',)').lstrip( '(\'' ))
+      query = "DELETE FROM " + self._table_name + " WHERE " + key + " = '" + self._value + "';"
+      print("Query: " + query)
+      self.__execute(query, False)
 
     def _select(self):
-        for key, value in __dict__.items():
-            query = "SELECT " + key + " FROM " + self._table_name + ");"
+        for key, value in self.__dict__.items():
+          if key is "alexa_id":
+            query = "SELECT " + key + " FROM " + self._table_name + ";"
         print("Query: " + query)
-        self.__execute(query)
+        self.__execute(query, True)
 
-    def __execute(self, query):
+    def __execute(self, query, fetch):
         cur = Database.conn.cursor()
         cur.execute(query)
+        #print(cur.statusmessage)
+        if fetch is True:
+          print(cur.fetchall())
         Database.conn.commit()
