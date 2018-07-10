@@ -38,6 +38,15 @@ def auth_redirect():
     return redirect(url_for('index'))
   return redirect(url_for('index') + '?error=1')
 
+@app.route('/profile')
+def profile():
+  profile_data={'name': 'Suku', 'email': 'suku.the.smart@gmail.com',
+      'phone': '9804990204'}
+  profile_data = render_template('profile.inc',
+      data=profile_data, key='1234')
+  return render_template('template.html', main_data=profile_data,
+      title="User Profile")
+
 @app.route('/logout')
 def logout():
   session.pop('id', None)
@@ -47,7 +56,7 @@ def logout():
 def product(barcode):
   # Fetch product goes here
   product_data={'name': 'Lassi', 'company': 'Amul',
-      'category': 'food', 'price': '15', 'measurement': '100 ml'}
+      'category': 'stationary', 'price': '15', 'measurement': '100 ml'}
   product_data = render_template('product.inc',
       barcode=barcode, data=product_data, action='insert')
   return render_template('template.html', main_data=product_data,
@@ -70,13 +79,17 @@ def authorize(pin):
 @app.route(API + '/product/<action>', methods=['POST', 'PUT', 'PATCH', 'DELETE'])
 def manage_product(action):
   method = request.method
+  redirect = False
   if request.method == 'POST':
     if action == "insert":
       method = 'PUT'
+      redirect = True
     elif action == "update":
       method = 'PATCH'
+      redirect = True
     elif action == "delete":
       method = 'DELETE'
+      redirect = True
     else:
       return Response("{'status': 'Bad Request'}", status=400)
 
