@@ -33,20 +33,21 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+        app.receivedEvent('content');
         
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
+        var preLoadElement = parentElement.querySelector('.pre-load');
+        var preLoginElement = parentElement.querySelector('.pre-login');
+				var postLoginElement = parentElement.querySelector('.post-login');
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+        preLoadElement.setAttribute('style', 'display:none;');
+				postLoginElement.setAttribute('style', 'display:none;');
+        preLoginElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
-        app.scanBarcode()
     },
     
     scanBarcode: function() {
@@ -74,15 +75,5 @@ var app = {
                 disableSuccessBeep: false // iOS and Android
             }
         );
-    },
-    
-    loginSubmit: function() {
-        $('#login').on('submit', function(e){
-            e.preventDefault();
-            //var len = $('#username').val().length;
-            //if (len < 6 && len > 1) {
-                //this.submit();
-            //}
-        });
     }
 };

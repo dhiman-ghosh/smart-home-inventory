@@ -1,165 +1,191 @@
 <!DOCTYPE html>
 <!--
-    Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
+Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 -->
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-tap-highlight" content="no" />
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
-    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-    <!--<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />-->
-    <!-- Good default declaration:
-    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-        * Enable inline JS: add 'unsafe-inline' to default-src
-        * Enable eval(): add 'unsafe-eval' to default-src
-    * Create your own at http://cspisawesome.com
-    -->
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+<meta charset="utf-8" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="msapplication-tap-highlight" content="no" />
+<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+<!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+<!--<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />-->
+<!-- Good default declaration:
+* gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+* https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+* Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+* Enable inline JS: add 'unsafe-inline' to default-src
+* Enable eval(): add 'unsafe-eval' to default-src
+* Create your own at http://cspisawesome.com
+-->
+<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
 
-    <!--<link rel="stylesheet" type="text/css" href="css/index.css" />-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-    * {
-      box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      -webkit-box-sizing: border-box;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      font-kerning: auto;
-    }
-    html {
-      -webkit-text-size-adjust: 100%;
-      font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
-    }
-    body {
-      margin: 0;
-    }
-    .form-control {
-      box-shadow: none;
-      border-color: #ddd;
-    }
-    .form-control:focus {
-      border-color: #4aba70; 
-    }
-    .login-form {
-      width: 350px;
-      margin: 0 auto;
-      padding: 30px 0;
-    }
-    .login-form form {
-      color: #434343;
-      border-radius: 1px;
-      margin-bottom: 15px;
-      background: #fff;
-      border: 1px solid #f3f3f3;
-      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-      padding: 30px;
-    }
-    .login-form h4 {
-      text-align: center;
-      font-size: 22px;
-      margin-bottom: 20px;
-    }
-    .login-form .avatar {
-      color: #fff;
-      margin: 0 auto 30px;
-      text-align: center;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      z-index: 9;
-      background: #4aba70;
-      padding: 15px;
-      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
-    }
-    .login-form .avatar i {
-      font-size: 62px;
-    }
-    .login-form .form-group {
-      margin-bottom: 20px;
-    }
-    .login-form .form-control, .login-form .btn {
-      min-height: 40px;
-      border-radius: 2px; 
-      transition: all 0.5s;
-    }
-    .login-form .close {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-    }
-    .login-form .btn {
-      background: #4aba70;
-      border: none;
-      line-height: normal;
-    }
-    .login-form .btn:hover, .login-form .btn:focus {
-      background: #42ae68;
-    }
-    .login-form .checkbox-inline {
-      float: left;
-    }
-    .login-form input[type="checkbox"] {
-      margin-top: 2px;
-    }
-    .login-form .forgot-link {
-      float: right;
-    }
-    .login-form .small {
-      font-size: 13px;
-    }
-    .login-form a {
-      color: #4aba70;
-    }
-    </style>
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <title>Smart Inventory</title>
+<!--<link rel="stylesheet" type="text/css" href="css/index.css" />-->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<style type="text/css">
+* {
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		font-kerning: auto;
+	}
+	html {
+		-webkit-text-size-adjust: 100%;
+		font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
+	}
+	body {
+		margin: 0;
+	}
+	.form-control {
+		box-shadow: none;
+		border-color: #ddd;
+	}
+	.form-control:focus {
+		border-color: #4aba70; 
+	}
+	.login-form {
+		width: 350px;
+		margin: 0 auto;
+		padding: 30px 0;
+	}
+	.login-form form {
+		color: #434343;
+		border-radius: 1px;
+		margin-bottom: 15px;
+		background: #fff;
+		border: 1px solid #f3f3f3;
+		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+		padding: 30px;
+	}
+	.login-form h4 {
+		text-align: center;
+		font-size: 22px;
+		margin-bottom: 20px;
+	}
+	.login-form .avatar {
+		color: #fff;
+		margin: 0 auto 30px;
+		text-align: center;
+		width: 100px;
+		height: 100px;
+		border-radius: 50%;
+		z-index: 9;
+		background: #4aba70;
+		padding: 15px;
+		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+	}
+	.login-form .avatar i {
+		font-size: 62px;
+	}
+	.login-form .form-group {
+		margin-bottom: 20px;
+	}
+	.login-form .form-control, .login-form .btn {
+		min-height: 40px;
+		border-radius: 2px; 
+		transition: all 0.5s;
+	}
+	.login-form .close {
+		position: absolute;
+		top: 15px;
+		right: 15px;
+	}
+	.login-form .btn {
+		background: #4aba70;
+		border: none;
+		line-height: normal;
+	}
+	.login-form .btn:hover, .login-form .btn:focus {
+		background: #42ae68;
+	}
+	.login-form .checkbox-inline {
+		float: left;
+	}
+	.login-form input[type="checkbox"] {
+		margin-top: 2px;
+	}
+	.login-form .forgot-link {
+		float: right;
+	}
+	.login-form .small {
+		font-size: 13px;
+	}
+	.login-form a {
+		color: #4aba70;
+	}
+</style>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<title>Smart Inventory</title>
 </head>
 
 <body>
-    <div class = "page-header">   
-      <h3 class="text-center">
-          Smart Home Inventory
-      </h3>
-      <h5 class="text-center">Say <i>"Alexa, launch inventory"</h5>
-    </div>
-    <div class="login-form">    
-      <form action="/auth" id="login" method="post">
-        <div class="avatar"><i class="material-icons">&#xE7FF;</i></div>
-          <h4 class="modal-title">Login to Your Account</h4>
-            <div class="form-group">
-              <input type="password" name="pin" class="form-control" placeholder="Enter Access Key" pattern="[0-9]{6}" title="Enter 6 digit numeric PIN" required="required">
-            </div>
-            <div class="form-group small clearfix">
-              <label class="checkbox-inline"><input type="checkbox"> Remember me</label>
-              <a href="#" class="forgot-link" data-toggle="tooltip" 
-                title="It is the 6 digit PIN provided by your alexa device for accessing your account">What is access key?</a>
-            </div> 
-            <input type="submit" class="btn btn-primary btn-block btn-lg" value="Login">              
-        </form>     
-      <div class="text-center small">
-        Don't have an access key? <br />
-        Say <i><a href="#">Alexa, ask inventory to tell my access key</a></i>
-      </div>
-    </div>
-
-    <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
-    <script type="text/javascript">
-        app.initialize();
-    </script>
+	<div id="content>"
+	<div class = "page-header">   
+		<h3 class="text-center">
+			Smart Home Inventory
+		</h3>
+		<h5 class="text-center">Say <i>"Alexa, launch inventory"</h5>
+	</div>
+	<div class="pre-load">
+		<p>Loading...</p>
+	</div>
+	<div class="login-form pre-login" style="display:none;">    
+		<form action="/auth" id="login" method="post">
+			<div class="avatar"><i class="material-icons">&#xE7FF;</i></div>
+			<h4 class="modal-title">Login to Your Account</h4>
+			<div class="form-group">
+				<input type="password" name="pin" class="form-control" placeholder="Enter Access Key" pattern="[0-9]{6}" title="Enter 6 digit numeric PIN" required="required">
+			</div>
+			<div class="form-group small clearfix">
+				<label class="checkbox-inline"><input type="checkbox"> Remember me</label>
+				<a href="#" class="forgot-link" data-toggle="tooltip" 
+					title="It is the 6 digit PIN provided by your alexa device for accessing your account">What is access key?</a>
+			</div> 
+			<input type="submit" class="btn btn-primary btn-block btn-lg" value="Login">
+		</form>
+		<div class="text-center small">
+		Don't have an access key? <br />
+		Say <i><a href="#">Alexa, ask inventory to tell my access key</a></i>
+		</div>
+	</div>
+	<div class="login-form post-login" style="display:none;">   
+		<form action="#" method="post">
+			<div class="avatar"><i class="material-icons">line_weight</i></div>
+			<div class="form-group">
+				<button type="button" id="add" class="btn-success btn-block btn-lg">Add to Stock</button>
+				<button type="button" id="remove" class="btn-danger btn-block btn-lg">Remove from Stock</button>
+				<button type="button" id="manage" class="btn-primary btn-block btn-lg">Manage Product</button>
+				<button type="button" id="report" class="btn-primary btn-block btn-lg">Stock Report</button>
+				<button type="button" id="query" class="btn-primary btn-block btn-lg">Stock Query</button>
+				<button type="button" id="profile" class="btn-primary btn-block btn-lg">Manage Profile</button>
+				<button type="button" id="logout" class="btn-danger btn-block btn-lg">Logout</button>
+			</div>
+		</form>
+		<div class="text-center small">
+		Don't have an access key? <br />
+		Say <i><a href="#">Alexa, ask inventory to tell my access key</a></i>
+		</div>
+	</div>
+	</div> <!-- close of content div -->
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript">
+		app.initialize();
+		$('form#login').on('submit', function(e){
+			e.preventDefault();
+			app.scanBarcode();
+		});
+	</script>
 </body>
 
 </html>
