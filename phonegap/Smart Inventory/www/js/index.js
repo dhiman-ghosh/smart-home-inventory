@@ -33,20 +33,25 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('content');
+        app.receivedEvent('ready');
     },
     // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var preLoadElement = parentElement.querySelector('.pre-load');
-        var preLoginElement = parentElement.querySelector('.pre-login');
-				var postLoginElement = parentElement.querySelector('.post-login');
-
-        preLoadElement.setAttribute('style', 'display:none;');
-				postLoginElement.setAttribute('style', 'display:none;');
-        preLoginElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
+    receivedEvent: function(state) {
+      var parentElement = document.getElementById('content');
+      var preLoadElement = parentElement.querySelector('.pre-load');
+      var preLoginElement = parentElement.querySelector('.pre-login');
+      var postLoginElement = parentElement.querySelector('.post-login');
+          
+      if (state == 'ready') {
+          preLoadElement.setAttribute('style', 'display:none;');
+          postLoginElement.setAttribute('style', 'display:none;');
+          preLoginElement.setAttribute('style', 'display:block;');
+          
+      } else if (state == 'authorized') {
+          preLoadElement.setAttribute('style', 'display:none;');
+          postLoginElement.setAttribute('style', 'display:block;');
+          preLoginElement.setAttribute('style', 'display:none;');
+      }
     },
     
     scanBarcode: function() {
@@ -74,5 +79,27 @@ var app = {
                 disableSuccessBeep: false // iOS and Android
             }
         );
+    },
+    
+    authorize: function (pin) {
+      $.ajax({
+        type: "GET",
+        url: "http://192.168.137.1:5000/api/v1/auth/" + pin,
+        /* dataType: "json",*/
+        /* data: {identity: <username from form>, password: <password from form>}, */
+        success: function(data) {
+          try {
+            var obj = JSON.parse(data);
+            } catch(e) {
+              alert(e);
+            }
+          if (obj.status == "OK") {
+            app.receivedEvent('authorized');
+          }
+        },
+        error: function(e) {
+          alert('Error: ' + e.status);
+        }
+      });
     }
 };

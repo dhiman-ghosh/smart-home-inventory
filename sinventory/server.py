@@ -72,9 +72,9 @@ def stock(barcode):
 @app.route(API + '/auth/<pin>', methods=['GET'])
 def authorize(pin):
   if pin == '123456':
-    return Response("{'status': 'OK'}")
+    return Response('{"status": "OK"}')
   else:
-    return Response("{'status': 'Unauthorized'}", status=401)
+    return Response('{"status": "Unauthorized"}', status=401)
 
 @app.route(API + '/product/<action>', methods=['POST', 'PUT', 'PATCH', 'DELETE'])
 def manage_product(action):
@@ -105,3 +105,6 @@ def manage_product(action):
 @app.route(API + '/stock/<barcode>')
 def update_stock(barcode):
   return {'status': 'OK'}
+
+if __name__ == "__main__":
+  app.run(host='0.0.0.0', debug=True)

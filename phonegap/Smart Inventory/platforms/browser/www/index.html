@@ -144,7 +144,9 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 			<div class="avatar"><i class="material-icons">&#xE7FF;</i></div>
 			<h4 class="modal-title">Login to Your Account</h4>
 			<div class="form-group">
-				<input type="password" name="pin" class="form-control" placeholder="Enter Access Key" pattern="[0-9]{6}" title="Enter 6 digit numeric PIN" required="required">
+				<input type="number" name="pin" id="pin" class="form-control" placeholder="Enter Access Key" 
+        inputmode="numeric" pattern="[0-9]{6}" title="Enter 6 digit numeric PIN" required="required" 
+        style="-webkit-text-security: disc;">
 			</div>
 			<div class="form-group small clearfix">
 				<label class="checkbox-inline"><input type="checkbox"> Remember me</label>
@@ -183,7 +185,7 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 		app.initialize();
 		$('form#login').on('submit', function(e){
 			e.preventDefault();
-			app.scanBarcode();
+			app.authorize($('#pin').val())
 		});
 	</script>
 </body>
