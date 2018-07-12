@@ -91,7 +91,7 @@ def manage_product(action):
       method = 'DELETE'
       redirect = True
     else:
-      return Response("{'status': 'Bad Request'}", status=400)
+      return Response('{"status": "Bad Request"}', status=400)
 
   if method == "PUT":
     return "{'status': 'OK'}"
@@ -102,9 +102,18 @@ def manage_product(action):
   else:
     return Response("{'status': 'Internal Server Error'}", status=500)
 
-@app.route(API + '/stock/<barcode>')
-def update_stock(barcode):
-  return {'status': 'OK'}
+@app.route(API + '/stock/<action>', methods=['POST'])
+def manage_stock(action):
+  try:
+    barcode = request.form['barcode']
+    quantity = request.form['quantity']
+  except KeyError:
+    return Response('{"status": "Bad Request"}', status=400)
+  
+  if action == "add":
+    return Response('{"status": "OK", "action": "add"}')
+  elif action == "remove":
+    return Response('{"status": "OK", "action": "remove"}')
 
 if __name__ == "__main__":
   app.run(host='0.0.0.0', debug=True)
