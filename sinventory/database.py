@@ -27,21 +27,35 @@ class Database:
 
     def _delete(self, value):
       self._value = value;
-      query = "select kc.column_name from information_schema.table_constraints tc, information_schema.key_column_usage kc where tc.constraint_type = 'PRIMARY KEY'";
+      query = "select kc.column_name from information_schema.table_constraints tc, information_schema.key_column_usage kc where tc.constraint_type = 'UNIQUE'";
       cur = Database.conn.cursor()
       cur.execute(query)
-      primary_key = cur.fetchone()
-      key = str(str(primary_key).rstrip('\',)').lstrip( '(\'' ))
-      query = "DELETE FROM " + self._table_name + " WHERE " + key + " = '" + self._value + "';"
-      print("Query: " + query)
-      self.__execute(query, False)
-
-    def _select(self):
-        for key, value in self.__dict__.items():
-          if key is "alexa_id":
-            query = "SELECT " + key + " FROM " + self._table_name + ";"
+      for key in cur:
+        key = str(str(key).rstrip('\',)').lstrip( '(\'' ))
+        print(key)
+        print(self._value)
+        query = "DELETE FROM " + self._table_name + " WHERE " + key + " = '" + self._value + "';"
         print("Query: " + query)
-        self.__execute(query, True)
+        res = self.__execute(query, False)
+        list1 = (res.split())
+        if (int(list1.pop()) > 0):
+          return True
+
+    def _select(self, value):
+      self._value = value;
+      query = "select kc.column_name from information_schema.table_constraints tc, information_schema.key_column_usage kc where tc.constraint_type = 'UNIQUE'";
+      cur = Database.conn.cursor()
+      cur.execute(query)
+      for key in cur:
+        key = str(str(key).rstrip('\',)').lstrip('(\''))
+        print(key)
+        print(self._value)
+        query = "SELECT " + key + " FROM " + self._table_name + " WHERE " + key + " = '" + self._value + "';"
+        print("Query: " + query)
+        res = self.__execute(query, True)
+        list1 = (res.split())
+        if (int(list1.pop()) > 0):
+          return True
 
     def __execute(self, query, fetch):
         cur = Database.conn.cursor()
@@ -50,3 +64,4 @@ class Database:
         if fetch is True:
           print(cur.fetchall())
         Database.conn.commit()
+        return cur.statusmessage

@@ -13,13 +13,8 @@ class Profile(database.Database):
   def add(self):
     self._insert()
 
-  def delete(self, val):
-    self._delete(val)
-
-  def select(self):
-    self._select()
-    
   def authorize(self, access_key):
+    print(self._select(access_key))
     """
     Checks for the presence of access key and populates this class attributes
     
@@ -58,6 +53,7 @@ class Profile(database.Database):
     pass
     
   def delete(self, access_key):
+    print(self._delete(access_key))
     """
     Deletes an user account and all associations in other tables after re-authorization
     
@@ -67,7 +63,6 @@ class Profile(database.Database):
     Returns:
       True for success, None for authorization failure, False for DB errors
     """
-    pass
       
   def get_db_error(self):
     """

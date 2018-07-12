@@ -9,8 +9,8 @@ obj.email = "suku.the.smart@gmail.com"
 obj.mobile = 9804990204
 
 obj.add()
-obj.select()
-obj.delete("amzn1.ask.account.AHTZL4MVZNRSUHGSLIIT2JVLZ7JBQPUGGWZ3CINWEOE36CB3HNJL4XTV3VSCXRZEZXJJQLQFHHAK2Z4DQZPMO5PCA2P2CFQZR4BIYEZR4VNG6CVLWQN47KDAFSJ6MA7Q6PXXUYLNKJ5DFU5CKUYR7CCELRGH7WDD56EFSFPC3U2HKAOJK3F5WEOMX7YLPNECOM556NSWA4HJ5VY")
+obj.authorize('1988')
+obj.delete('1988')
 
 """
 obj = profile.Profile()
@@ -25,4 +25,4 @@ obj.select()
 obj.delete()
 """
 
-#create table profile (alexa_id VARCHAR(256) NOT NULL, pin INT NOT NULL, name VARCHAR(50), email VARCHAR(355), mobile BIGINT, PRIMARY KEY(alexa_id));
+#create table profile (alexa_id VARCHAR(256) NOT NULL UNIQUE, pin INT NOT NULL UNIQUE, name VARCHAR(50), email VARCHAR(355), mobile BIGINT, PRIMARY KEY(alexa_id));
