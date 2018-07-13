@@ -1,5 +1,5 @@
 from sinventory import database
-
+import random
 
 class Profile(database.Database):
   def __init__(self):
@@ -24,9 +24,15 @@ class Profile(database.Database):
     Returns:
       True if success, False otherwise
     """
-    pass
     
   def get_access_key(self, alexa_user_id):
+    if (self._select(alexa_user_id)) is False:
+        self.alexa_id = alexa_user_id
+        access_key = random.randint(1, 999999)
+        self.pin = access_key
+        self._insert()
+    else:
+      print("Update to be done")
     """
     Creates a new user profile if does not exists and return an unique access key.
     The other columns of the profile table should be kept blank for new user.
@@ -41,7 +47,7 @@ class Profile(database.Database):
     Returns:
       6 digits unique access key (string)
     """
-    pass
+    return self.pin
     
   def update(self):
     """

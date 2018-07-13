@@ -10,6 +10,7 @@ class Database:
         if Database.conn is None:
             Database.conn = psycopg2.connect(database_url, sslmode='require')
         self._table_name = table_name
+
     def _insert(self):
         values = list()
         query = None
