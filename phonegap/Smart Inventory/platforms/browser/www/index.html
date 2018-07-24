@@ -187,6 +187,27 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 			e.preventDefault();
 			app.authorize($('#pin').val())
 		});
+		$('button#add').click(function(e){
+			app.add();
+		});
+		$('button#remove').click(function(e){
+			app.remove();
+		});
+		$('button#manage').click(function(e){
+			app.manage();
+		});
+		$('button#report').click(function(e){
+			app.report();
+		});
+		$('button#query').click(function(e){
+			app.query();
+		});
+		$('button#profile').click(function(e){
+			app.profile();
+		});
+		$('button#logout').click(function(e){
+			app.logout();
+		});
 	</script>
 </body>
 

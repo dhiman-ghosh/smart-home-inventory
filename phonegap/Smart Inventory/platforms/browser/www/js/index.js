@@ -17,6 +17,8 @@
  * under the License.
  */
 var app = {
+				// Application Server
+				URI: 'http://192.168.1.11/api/v1',
     // Application Constructor
     initialize: function() {
         this.bindEvents();
@@ -54,16 +56,47 @@ var app = {
       }
     },
     
-    scanBarcode: function() {
+    htmlHandler: function(source, data) {
+    				alert(data);
+    },
+    
+    jsonHandler: function(msg) {
+    				alert(msg.resource);
+    				alert(msg.data.status);
+    				navigator.notification.alert(msg.resource);
+    },
+    
+    add: function() {
+    					app.scanBarcode('/stock/add');
+    },
+    
+    remove: function() {
+    					resp = app.scanBarcode('/stock/remove');
+    },
+    
+    manage: function() {
+    					upc = app.scanBarcode(null);
+    },
+    
+    query: function() {
+    					upc = app.scanBarcode(null);
+    },
+    
+    scanBarcode: function(uri, json = true) {
         cordova.plugins.barcodeScanner.scan(
             function (result) {
-                alert("We got a barcode\n" +
-                      "Result: " + result.text + "\n" +
-                      "Format: " + result.format + "\n" +
-                      "Cancelled: " + result.cancelled);
+            				if (result.cancelled == true) {
+            								return null;
+            				} else if (json == false) {
+            								app.httpHandler(uri, result.text)
+            				} else {
+            								data = {barcode: result.text, quantity: 1};
+            								app.httpAction(uri, 'POST', data, app.jsonHandler);
+            				}
             },
             function (error) {
                 alert("Scanning failed: " + error);
+                return null;
             },
             {
                 preferFrontCamera : false, // iOS and Android
@@ -84,17 +117,32 @@ var app = {
     authorize: function (pin) {
       $.ajax({
         type: "GET",
-        url: "http://192.168.137.1:5000/api/v1/auth/" + pin,
-        /* dataType: "json",*/
+        url: app.URI + '/auth/' + pin,
+        dataType: "json",
         /* data: {identity: <username from form>, password: <password from form>}, */
         success: function(data) {
-          try {
-            var obj = JSON.parse(data);
-            } catch(e) {
-              alert(e);
-            }
-          if (obj.status == "OK") {
+          if (data.status == "OK") {
             app.receivedEvent('authorized');
+          }
+        },
+        error: function(e) {
+          alert('Error: ' + e.status);
+        }
+      });
+    },
+    
+    httpAction: function (resource, method = 'GET', data = null, callback = null) {
+      $.ajax({
+        type: method,
+        url: app.URI + resource,
+        dataType: "json",
+        data: data,
+        success: function(data) {
+          if (callback != null) {
+          				var resp = new Object();
+          				resp.data = data;
+          				resp.resource = resource;
+          				callback(resp);
           }
         },
         error: function(e) {
