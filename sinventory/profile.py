@@ -76,3 +76,4 @@ class Profile(database.Database):
     Returns:
       Error string if present, None otherwise
     """
+    pass
