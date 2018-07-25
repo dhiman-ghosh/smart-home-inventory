@@ -18,7 +18,7 @@
  */
 var app = {
 				// Application Server
-				URI: 'http://192.168.1.11/api/v1',
+				URI: 'http://192.168.137.1:5000/api/v1',
     // Application Constructor
     initialize: function() {
         this.bindEvents();
@@ -88,7 +88,7 @@ var app = {
             				if (result.cancelled == true) {
             								return null;
             				} else if (json == false) {
-            								app.httpHandler(uri, result.text)
+            								app.htmlHandler(uri, result.text);
             				} else {
             								data = {barcode: result.text, quantity: 1};
             								app.httpAction(uri, 'POST', data, app.jsonHandler);

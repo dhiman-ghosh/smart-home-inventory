@@ -18,7 +18,7 @@
  */
 var app = {
 				// Application Server
-				URI: 'http://192.168.1.11/api/v1',
+				URI: 'http://192.168.137.1:5000/api/v1',
     // Application Constructor
     initialize: function() {
         this.bindEvents();
