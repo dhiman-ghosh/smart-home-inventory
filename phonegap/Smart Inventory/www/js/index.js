@@ -56,18 +56,28 @@ var app = {
       }
     },
     
-    htmlHandler: function(source, data) {
-    				alert(data);
+    barcodeHandler: function(code) {
+    				navigator.notification.prompt(
+                'Enter quantity',         // message
+                app.onAdd,             // callback to invoke
+                'Add Stock',              // title
+                ['Ok','Cancel'],          // buttonLabels
+                '1'                       // defaultText
+            );
     },
     
-    jsonHandler: function(msg) {
-    				alert(msg.resource);
-    				alert(msg.data.status);
-    				navigator.notification.alert(msg.resource);
+    jsonHandler: function(data) {
+    				alert(data)
     },
     
     add: function() {
     					app.scanBarcode('/stock/add');
+    },
+    
+    onAdd: function (results) {
+              alert("You selected number" + results.input1);
+              data = {barcode: '8901207019234', quantity: 1};
+              app.httpAction(uri, 'POST', data, app.jsonHandler);
     },
     
     remove: function() {
@@ -87,11 +97,8 @@ var app = {
             function (result) {
             				if (result.cancelled == true) {
             								return null;
-            				} else if (json == false) {
-            								app.htmlHandler(uri, result.text);
             				} else {
-            								data = {barcode: result.text, quantity: 1};
-            								app.httpAction(uri, 'POST', data, app.jsonHandler);
+            								barcodeHandler(result.text)
             				}
             },
             function (error) {
