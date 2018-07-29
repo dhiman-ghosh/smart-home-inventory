@@ -18,7 +18,8 @@
  */
 var app = {
 				// Application Server
-				URI: 'http://192.168.137.1:5000/api/v1',
+				SERVER: 'http://192.168.1.11',
+				API_PATH: '/api/v1',
     // Application Constructor
     initialize: function() {
         this.bindEvents();
@@ -38,7 +39,7 @@ var app = {
         app.receivedEvent('ready');
     },
     // Update DOM on a Received Event
-    receivedEvent: function(state) {
+    receivedEvent: function(state, html = null) {
       var parentElement = document.getElementById('content');
       var preLoadElement = parentElement.querySelector('.pre-load');
       var preLoginElement = parentElement.querySelector('.pre-login');
@@ -53,35 +54,91 @@ var app = {
           preLoadElement.setAttribute('style', 'display:none;');
           postLoginElement.setAttribute('style', 'display:block;');
           preLoginElement.setAttribute('style', 'display:none;');
+      } else if (state == 'product') {
+      				$('#main').html(html);
+      				$(document).on('submit', '#api', function(e){
+    								e.preventDefault();
+    								app.httpAction($(this).attr('action'), app.onProductUpdate, 'PUT', $(this).serialize());
+    						});
       }
     },
     
+    htmlHandler: function (results) {
+    				app.receivedEvent('product', results.data);
+    				//$('form#api').on('submit', function(e){
+							//		e.preventDefault();
+    				
+							//});
+    },
+    
     barcodeHandler: function(code) {
-    				navigator.notification.prompt(
-                'Enter quantity',         // message
-                app.onAdd,             // callback to invoke
-                'Add Stock',              // title
-                ['Ok','Cancel'],          // buttonLabels
-                '1'                       // defaultText
-            );
+    				title = "New Product";
+    				uri = "/";
+    				buttons = ['Add', 'Cancel'];
+    				app.httpAction(app.API_PATH + '/product/' + code, function(res) {
+    								if (res.data.name !== null) {
+    												title = res.data.name + ' (' + res.data.measurement + ')';
+    												buttons = ['Remove', 'Cancel', 'Add'];
+    								}
+    									
+    								navigator.notification.prompt(
+                "Enter Quantity",                   // message
+                function(r) {
+                				if (res.data.name !== null) {
+				                		if (r.buttonIndex === 1) {        // remove
+				                				uri = app.API_PATH + "/stock/remove";
+				                		} else if (r.buttonIndex === 3) { // add
+				                				uri = app.API_PATH + "/stock/add"                			
+				                		}
+                				} else if (r.buttonIndex === 1) {        // add new product
+				                				app.httpAction('/product/' + code + '?app=1', app.htmlHandler);
+				                				return;
+				             			} else {  // cencel
+				             							return;
+				             			}	   
+                	
+                				data = {barcode: code, quantity: r.input1};
+              						app.httpAction(uri, app.onStockUpdate, 'POST', data);
+                },
+                title,      // title
+                buttons,    // buttonLabels
+                '1'         // defaultText
+            	);
+    				});			
     },
     
-    jsonHandler: function(data) {
-    				alert(data)
+    onProductUpdate: function (results) {
+    					if (results.data.status === 'OK') {
+    					    navigator.notification.alert(
+                'Product Added Successfully!', // message
+                results.data.name,             // title
+                'OK'                           // buttonName
+        				 );
+    					} else {
+    								navigator.notification.beep();
+    								navigator.notification.alert(
+                results.data.error,         // message
+                'Could not add product!',  // title
+                'OK'                        // buttonName
+        				 );
+    					}          
     },
     
-    add: function() {
+    onStockUpdate: function (results) {
+    					if (results.data.status !== 'OK') {
+    					    navigator.notification.alert(
+                results.data.error,         // message
+                'Could not modify stock!',  // title
+                'OK'                     // buttonName
+        				 );
+    					} else {
+    								navigator.notification.beep();
+    								app.scanBarcode();
+    					}          
+    },
+    
+    stock: function() {
     					app.scanBarcode('/stock/add');
-    },
-    
-    onAdd: function (results) {
-              alert("You selected number" + results.input1);
-              data = {barcode: '8901207019234', quantity: 1};
-              app.httpAction(uri, 'POST', data, app.jsonHandler);
-    },
-    
-    remove: function() {
-    					resp = app.scanBarcode('/stock/remove');
     },
     
     manage: function() {
@@ -92,13 +149,13 @@ var app = {
     					upc = app.scanBarcode(null);
     },
     
-    scanBarcode: function(uri, json = true) {
+    scanBarcode: function() {
         cordova.plugins.barcodeScanner.scan(
             function (result) {
             				if (result.cancelled == true) {
             								return null;
             				} else {
-            								barcodeHandler(result.text)
+            								app.barcodeHandler(result.text);
             				}
             },
             function (error) {
@@ -124,7 +181,7 @@ var app = {
     authorize: function (pin) {
       $.ajax({
         type: "GET",
-        url: app.URI + '/auth/' + pin,
+        url: app.SERVER + app.API_PATH + '/auth/' + pin,
         dataType: "json",
         /* data: {identity: <username from form>, password: <password from form>}, */
         success: function(data) {
@@ -138,11 +195,16 @@ var app = {
       });
     },
     
-    httpAction: function (resource, method = 'GET', data = null, callback = null) {
+    httpAction: function (resource, callback, method = 'GET', data = null) {
+      datatype = "json";
+      if (resource.indexOf(app.API_PATH) === -1) {
+      			datatype = "html";
+      }
+    	
       $.ajax({
         type: method,
-        url: app.URI + resource,
-        dataType: "json",
+        url: app.SERVER + resource,
+        dataType: datatype,
         data: data,
         success: function(data) {
           if (callback != null) {

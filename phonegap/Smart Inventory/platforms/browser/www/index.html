@@ -125,6 +125,7 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 </style>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="http://192.168.1.12:8080/target/target-script-min.js#anonymous"></script>
 <title>Smart Inventory</title>
 </head>
 
@@ -160,12 +161,11 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 		Say <i><a href="#">Alexa, ask inventory to tell my access key</a></i>
 		</div>
 	</div>
-	<div class="login-form post-login" style="display:none;">   
+	<div class="login-form post-login" id="main" style="display:none;">   
 		<form action="#" method="post">
 			<div class="avatar"><i class="material-icons">line_weight</i></div>
 			<div class="form-group">
-				<button type="button" id="add" class="btn-success btn-block btn-lg">Add to Stock</button>
-				<button type="button" id="remove" class="btn-danger btn-block btn-lg">Remove from Stock</button>
+				<button type="button" id="stock" class="btn-success btn-block btn-lg">Manage Stock</button>
 				<button type="button" id="manage" class="btn-primary btn-block btn-lg">Manage Product</button>
 				<button type="button" id="report" class="btn-primary btn-block btn-lg">Stock Report</button>
 				<button type="button" id="query" class="btn-primary btn-block btn-lg">Stock Query</button>
@@ -187,11 +187,8 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 			e.preventDefault();
 			app.authorize($('#pin').val())
 		});
-		$('button#add').click(function(e){
-			app.add();
-		});
-		$('button#remove').click(function(e){
-			app.remove();
+		$('button#stock').click(function(e){
+			app.stock();
 		});
 		$('button#manage').click(function(e){
 			app.manage();
