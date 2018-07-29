@@ -13,7 +13,7 @@
 {% endif %}
 
 <div class="login-form">    
-  <form action="/api/v1/product/{{action}}" method="post">
+  <form id="api" action="/api/v1/product/{{action}}" method="post">
     <div class="avatar"><i class="material-icons">&#xE02E;</i></div>
       <h4 class="modal-title">Add / Update Product</h4>
         <div class="form-group">

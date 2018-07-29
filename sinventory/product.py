@@ -14,7 +14,7 @@ headers = {
 
 class Product(database.Database):
   def __init__(self, barcode):
-    #super().__init__("product", "postgres://postgres@localhost/wc")
+    super().__init__("product")
     self.gtin = barcode
     self.company = None
     self.name = None
@@ -34,6 +34,7 @@ class Product(database.Database):
     Returns:
       True if present, None if does not exist, False for DB errors
     """
+    self._select(self.gtin);
     return False
 
   def __update_gs1_product_details(self):

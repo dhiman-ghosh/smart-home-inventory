@@ -12,4 +12,4 @@ if [ $# -ne 0 ]; then
 fi
 
 sudo service firewalld stop
-sudo gunicorn sinventory.server:app -b 192.168.1.11:$PORT --log-level INFO --reload
+sudo gunicorn sinventory.server:app -b 192.168.1.11:$PORT --log-level DEBUG --reload

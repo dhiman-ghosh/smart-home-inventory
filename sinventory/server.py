@@ -3,6 +3,8 @@ import json
 import logging
 from flask import *
 
+#from sinventory import profile as dbprofile
+
 API = '/api/v1'
 PKG_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -59,8 +61,11 @@ def product(barcode):
       'category': 'stationary', 'price': '15', 'measurement': '100 ml'}
   product_data = render_template('product.inc',
       barcode=barcode, data=product_data, action='insert')
-  return render_template('template.html', main_data=product_data,
-      title="Product Database")
+  if request.args.get('app') is not None:
+    return product_data
+  else:
+    return render_template('template.html', main_data=product_data,
+        title="Product Database")
 
 @app.route('/stock/<barcode>')
 def stock(barcode):
@@ -71,16 +76,20 @@ def stock(barcode):
 # --------------- API ------------------
 @app.route(API + '/auth/<pin>', methods=['GET'])
 def authorize(pin):
-  if pin == '123456':
+  #user = dbprofile.Profile()
+  if True:#user.authorize(pin):
     return Response('{"status": "OK"}')
   else:
     return Response('{"status": "Unauthorized"}', status=401)
 
-@app.route(API + '/product/<action>', methods=['POST', 'PUT', 'PATCH', 'DELETE'])
+@app.route(API + '/product/<action>', methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def manage_product(action):
   method = request.method
   redirect = False
-  if request.method == 'POST':
+
+  if request.method == 'GET':
+    return Response('{"name": null, "measurement": "100ml"}');
+  elif request.method == 'POST':
     if action == "insert":
       method = 'PUT'
       redirect = True
@@ -94,13 +103,13 @@ def manage_product(action):
       return Response('{"status": "Bad Request"}', status=400)
 
   if method == "PUT":
-    return "{'status': 'OK'}"
+    return '{"status": "OK", "name": "Lassi"}'
   elif method == "PATCH":
-    return "{'status': 'OK'}"
+    return '{"status": "OK"}'
   elif method == "DELETE":
-    return "{'status': 'OK'}"
+    return '{"status": "OK"}'
   else:
-    return Response("{'status': 'Internal Server Error'}", status=500)
+    return Response('{"status": "Internal Server Error"1}', status=500)
 
 @app.route(API + '/stock/<action>', methods=['POST'])
 def manage_stock(action):
@@ -113,7 +122,7 @@ def manage_stock(action):
   if action == "add":
     return Response('{"status": "OK", "action": "add"}')
   elif action == "remove":
-    return Response('{"status": "OK", "action": "remove"}')
+    return Response('{"status": "NOTOK", "error": "Test Error"}')
 
 if __name__ == "__main__":
   app.run(host='0.0.0.0', debug=True)

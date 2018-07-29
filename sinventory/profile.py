@@ -1,9 +1,9 @@
 from sinventory import database
-import random
+
 
 class Profile(database.Database):
   def __init__(self):
-    super().__init__("profile", "postgres://postgres@localhost/wc")
+    super().__init__("profile")
     self.alexa_id = None
     self.pin = None
     self.name = None
@@ -23,31 +23,33 @@ class Profile(database.Database):
     Returns:
       True if success, False otherwise
     """
-    print(self._select(access_key))
+
+    #condition = {"pin": access_key}
+    result = (self._select(["pin"], {"pin": access_key}))
+    print("Result: " + str(result))
+    if (len(result) > 0):
+      print(True)
+      return True
+    else:
+      return False
+
     
   def get_access_key(self, alexa_user_id):
     """
-      Creates a new user profile if does not exists and return an unique access key.
-      The other columns of the profile table should be kept blank for new user.
-      In case of existing user, this method will reset the access key and returns.
+    Creates a new user profile if does not exists and return an unique access key.
+    The other columns of the profile table should be kept blank for new user.
+    In case of existing user, this method will reset the access key and returns.
+    
+    The access key is to be stored as MD5 hash string, to be used for authorization.
+    As a result, for better security, recovery of existing access key will not be possible.
+    
+    Args:
+      alexa_user_id: Unique user id string provided by Alexa device
       
-      The access key is to be stored as MD5 hash string, to be used for authorization.
-      As a result, for better security, recovery of existing access key will not be possible.
-      
-      Args:
-        alexa_user_id: Unique user id string provided by Alexa device
-        
-      Returns:
-        6 digits unique access key (string)
+    Returns:
+      6 digits unique access key (string)
     """
-    if (self._select(alexa_user_id)) is False:
-        self.alexa_id = alexa_user_id
-        access_key = random.randint(1, 999999)
-        self.pin = access_key
-        self._insert()
-    else:
-      print("Update to be done")
-    return self.pin
+    pass
     
   def update(self):
     """
@@ -59,6 +61,7 @@ class Profile(database.Database):
     pass
     
   def delete(self, access_key):
+    print(self._delete(access_key))
     """
     Deletes an user account and all associations in other tables after re-authorization
     
@@ -68,7 +71,6 @@ class Profile(database.Database):
     Returns:
       True for success, None for authorization failure, False for DB errors
     """
-    print(self._delete(access_key))
       
   def get_db_error(self):
     """
@@ -77,4 +79,3 @@ class Profile(database.Database):
     Returns:
       Error string if present, None otherwise
     """
-    pass
