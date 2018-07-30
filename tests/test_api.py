@@ -1,0 +1,5 @@
+from sinventory import product as dbproduct
+
+product = dbproduct.Product('8906017290026')
+product_data = product.get_dict()
+print(product_data)

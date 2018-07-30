@@ -34,8 +34,8 @@ class Product(database.Database):
     Returns:
       True if present, None if does not exist, False for DB errors
     """
-    self._select(self.gtin);
-    return False
+    #self._select(self.gtin);
+    return None
 
   def __update_gs1_product_details(self):
     query = 'format=json;'
@@ -49,9 +49,28 @@ class Product(database.Database):
     response = requests.get(full_url, headers=headers)
 
     if response.status_code == 200:
+      print(str(response.content))
       data = json.loads(response.content.decode())
-      self.name = data.name
-      self.company = data.brand
-      # need to update rest of the things
+      self.name = data[0].get('name')
+      if "not provided" in self.name:
+        self.name = ""
+      
+      self.company = data[0].get('brand')
+      if self.company == "":
+        self.company = data[0]['company_detail']['contact_info'].get('website')
+        if self.company != "":
+          self.company = self.company.split('.')[1].capitalize()
+      else:
+        self.company = self.company.capitalize()
+        
+      if 'weights_and_measures' in data[0]:
+        self.measurement = data[0]['weights_and_measures'].get('net_weight') + ' ' +\
+          data[0]['weights_and_measures'].get('measurement_unit')
+          
+      if 'mrp' in data[0]:
+        self.mrp = data[0]['mrp'][0].get('mrp')
       
     return None
+    
+  def get_dict(self):
+    return self.__dict__

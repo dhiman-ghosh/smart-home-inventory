@@ -3,7 +3,8 @@ import json
 import logging
 from flask import *
 
-#from sinventory import profile as dbprofile
+from sinventory import profile as dbprofile
+from sinventory import product as dbproduct
 
 API = '/api/v1'
 PKG_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -57,8 +58,10 @@ def logout():
 @app.route('/product/<barcode>')
 def product(barcode):
   # Fetch product goes here
-  product_data={'name': 'Lassi', 'company': 'Amul',
-      'category': 'stationary', 'price': '15', 'measurement': '100 ml'}
+  product = dbproduct.Product(barcode)
+  product_data = product.get_dict()
+  #product_data={'name': 'Lassi', 'company': 'Amul',
+  #    'category': 'stationary', 'price': '15', 'measurement': '100 ml'}
   product_data = render_template('product.inc',
       barcode=barcode, data=product_data, action='insert')
   if request.args.get('app') is not None:
