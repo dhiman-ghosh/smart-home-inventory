@@ -16,15 +16,17 @@ class Product(database.Database):
   def __init__(self, barcode, use_gs1_api=False):
     super().__init__("product")
     self.gtin = barcode
-    self.company = ''
+    self.brand = ''
     self.name = ''
     self.category = ''
     self.measurement = ''
     self.mrp = ''
-    self.is_present = True
+    self.stock = 0
+
+    self._is_present = True
     
     if self.__update_product_details() is None:
-      self.is_present = False
+      self._is_present = False
       if use_gs1_api is True:
         self.__update_gs1_product_details()
       
@@ -35,11 +37,20 @@ class Product(database.Database):
     Returns:
       True if present, None if does not exist, False for DB errors
     """
-    result = (self._select(["gtin"], {"gtin": self.gtin}))
+    result = (self._select(list(self.__dict__.keys()), {"gtin": self.gtin}))
+    print(result)
+
+    self.name = result.get('name')
+    self.brand = result.get('brand')
+    self.category = result.get('category')
+    self.measurement = result.get('measurement')
+    self.mrp = result.get('mrp')
+    self.stock = result.get('stock')
+
     if len(result) > 0:
       return True
     else:
-      return False
+      return None
 
 
   def __update_gs1_product_details(self):
@@ -60,13 +71,13 @@ class Product(database.Database):
       if "not provided" in self.name:
         self.name = ""
       
-      self.company = data[0].get('brand')
-      if self.company == "":
-        self.company = data[0]['company_detail']['contact_info'].get('website')
-        if self.company != "":
-          self.company = self.company.split('.')[1].capitalize()
+      self.brand = data[0].get('brand')
+      if self.brand == "":
+        self.brand = data[0]['company_detail']['contact_info'].get('website')
+        if self.brand != "":
+          self.brand = self.brand.split('.')[1].capitalize()
       else:
-        self.company = self.company.capitalize()
+        self.brand = self.brand.capitalize()
         
       if 'weights_and_measures' in data[0]:
         self.measurement = data[0]['weights_and_measures'].get('net_weight') + ' ' +\
@@ -76,11 +87,47 @@ class Product(database.Database):
         self.mrp = data[0]['mrp'][0].get('mrp')
       
     return None
+
+  @property
+  def is_present(self):
+    return self._is_present
     
   def get_data(self, is_json=False):
     """
     Returns product information as dict by default. As JSON if 'json' flag is set.
     """
+    dict_ = self.__dict__.copy()
+    dict_.update({'is_present': self.is_present})
     if is_json is True:
-      return json.dumps(self.__dict__)
-    return self.__dict__
+      return json.dumps(dict_)
+    return dict_
+
+  def add(self):
+    ret = dict()
+    if self._insert():
+      ret.update({'status': 'OK'})
+      ret.update({'name': self.name})
+      return json.dumps(ret)
+    ret.update({'status': 'FAILURE'})
+    ret.update({'error': 'Failed to add into DB'})
+    return json.dumps(ret)
+
+  def remove(self):
+    ret = dict()
+    if self._delete({"gtin": self.gtin}):
+      ret.update({'status': 'OK'})
+      ret.update({'name': self.name})
+      return json.dumps(ret)
+    ret.update({'status': 'FAILURE'})
+    ret.update({'error': 'Failed to delete from DB'})
+    return json.dumps(ret)
+
+  def update(self):
+    ret = dict()
+    if self._delete(self.__dict__, {"gtin": self.gtin}):
+      ret.update({'status': 'OK'})
+      ret.update({'name': self.name})
+      return json.dumps(ret)
+    ret.update({'status': 'FAILURE'})
+    ret.update({'error': 'Failed to update from DB'})
+    return json.dumps(ret)

@@ -58,10 +58,8 @@ def logout():
 @app.route('/product/<barcode>')
 def product(barcode):
   # Fetch product goes here
-  product = dbproduct.Product(barcode, use_gs1_api=False)
+  product = dbproduct.Product(barcode, use_gs1_api=True)
   product_data = product.get_data()
-  #product_data={'name': 'Lassi', 'company': 'Amul',
-  #    'category': 'stationary', 'price': '15', 'measurement': '100 ml'}
   product_data = render_template('product.inc',
       barcode=barcode, data=product_data, action='insert')
   if request.args.get('app') is not None:
@@ -90,8 +88,9 @@ def manage_product(action):
   method = request.method
   redirect = False
 
+  product = dbproduct.Product(action)
+
   if request.method == 'GET':
-    product = dbproduct.Product(action)
     product_data = product.get_data(is_json=True)
     return Response(product_data);
   elif request.method == 'POST':
@@ -108,11 +107,17 @@ def manage_product(action):
       return Response('{"status": "Bad Request"}', status=400)
 
   if method == "PUT":
-    return '{"status": "OK", "name": "Lassi"}'
+    product.brand = request.form['company']
+    product.name = request.form['name']
+    product.category = request.form['category']
+    product.measurement = request.form['measurement']
+    product.mrp = request.form['mrp']
+    product.stock = 0
+    return Response(product.add())
   elif method == "PATCH":
     return '{"status": "OK"}'
   elif method == "DELETE":
-    return '{"status": "OK"}'
+    return Response(product.delete())
   else:
     return Response('{"status": "Internal Server Error"1}', status=500)
 
