@@ -14,7 +14,7 @@ headers = {
 
 class Product(database.Database):
   def __init__(self, barcode, use_gs1_api=False):
-    #super().__init__("product")
+    super().__init__("product")
     self.gtin = barcode
     self.company = ''
     self.name = ''
@@ -35,8 +35,12 @@ class Product(database.Database):
     Returns:
       True if present, None if does not exist, False for DB errors
     """
-    #self._select(self.gtin);
-    return None
+    result = (self._select(["gtin"], {"gtin": self.gtin}))
+    if len(result) > 0:
+      return True
+    else:
+      return False
+
 
   def __update_gs1_product_details(self):
     query = 'format=json;'

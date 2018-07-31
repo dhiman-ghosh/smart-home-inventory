@@ -1,5 +1,5 @@
 from sinventory import database
-
+import random
 
 class Profile(database.Database):
   def __init__(self):
@@ -23,14 +23,13 @@ class Profile(database.Database):
     Returns:
       True if success, False otherwise
     """
-
-    #condition = {"pin": access_key}
     result = (self._select(["pin"], {"pin": access_key}))
     print("Result: " + str(result))
-    if (len(result) > 0):
+    if len(result) > 0:
       print(True)
       return True
     else:
+      print(False)
       return False
 
     
@@ -49,7 +48,14 @@ class Profile(database.Database):
     Returns:
       6 digits unique access key (string)
     """
-    pass
+    access_key = random.randint(100000, 999999)
+    self.pin = access_key
+    if (self._select(["alexa_id"], {"alexa_id": alexa_user_id})) is False:
+      self.alexa_id = alexa_user_id
+      self._insert()
+    else:
+      self._update({"pin": access_key}, {"alexa_id": alexa_user_id})
+    return self.pin
     
   def update(self):
     """
@@ -61,7 +67,6 @@ class Profile(database.Database):
     pass
     
   def delete(self, access_key):
-    print(self._delete(access_key))
     """
     Deletes an user account and all associations in other tables after re-authorization
     
@@ -71,6 +76,12 @@ class Profile(database.Database):
     Returns:
       True for success, None for authorization failure, False for DB errors
     """
+    if (self._delete({"pin": access_key})) is True:
+      print(True)
+      return True
+    else:
+      print(False)
+      return False
       
   def get_db_error(self):
     """
