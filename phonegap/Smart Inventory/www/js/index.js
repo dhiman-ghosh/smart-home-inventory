@@ -18,7 +18,7 @@
  */
 var app = {
 				// Application Server
-				SERVER: 'http://192.168.137.1:5000',
+				SERVER: 'http://192.168.1.11',
 				API_PATH: '/api/v1',
     // Application Constructor
     initialize: function() {
@@ -62,7 +62,8 @@ var app = {
           dynamicElement.setAttribute('style', 'display:block;');
           $(document).on('submit', '#api', function(e){
                 e.preventDefault();
-                app.httpAction($(this).attr('action'), app.onProductUpdate, 'PUT', $(this).serialize());
+                var uri = app.API_PATH + "/product/" + $(this).find("input[name='barcode']").val()
+                app.httpAction(uri, app.onProductUpdate, 'PUT', $(this).serialize());
             });
       }
     },
@@ -88,12 +89,14 @@ var app = {
     								navigator.notification.prompt(
                 "Enter Quantity",                   // message
                 function(r) {
-                				if (res.data.name !== null) {
+                				if (res.data.is_present === true) {
 				                		if (r.buttonIndex === 1) {        // remove
 				                				uri = app.API_PATH + "/stock/remove";
 				                		} else if (r.buttonIndex === 3) { // add
 				                				uri = app.API_PATH + "/stock/add"                			
-				                		}
+				                		} else {  // cencel
+                              return;
+                            }
                 				} else if (r.buttonIndex === 1) {        // add new product
 				                				app.httpAction('/product/' + code + '?app=1', app.htmlHandler);
 				                				return;
@@ -115,16 +118,18 @@ var app = {
     					if (results.data.status === 'OK') {
     					    navigator.notification.alert(
                 'Product Added Successfully!', // message
+                null,
                 results.data.name,             // title
-                'OK'                           // buttonName
+                'Ok'                           // buttonName
         				 );
                  app.receivedEvent('authorized');
     					} else {
     								navigator.notification.beep();
     								navigator.notification.alert(
                 results.data.error,         // message
+                null,
                 'Could not add product!',  // title
-                'OK'                        // buttonName
+                'Ok'                        // buttonName
         				 );
     					}          
     },
