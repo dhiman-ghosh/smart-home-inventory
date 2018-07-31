@@ -13,19 +13,20 @@ headers = {
 }
 
 class Product(database.Database):
-  def __init__(self, barcode):
-    super().__init__("product")
+  def __init__(self, barcode, use_gs1_api=False):
+    #super().__init__("product")
     self.gtin = barcode
-    self.company = None
-    self.name = None
-    self.category = None
-    self.measurement = None
-    self.mrp = None
+    self.company = ''
+    self.name = ''
+    self.category = ''
+    self.measurement = ''
+    self.mrp = ''
     self.is_present = True
     
     if self.__update_product_details() is None:
       self.is_present = False
-      self.__update_gs1_product_details()
+      if use_gs1_api is True:
+        self.__update_gs1_product_details()
       
   def __update_product_details(self):
     """
@@ -72,5 +73,10 @@ class Product(database.Database):
       
     return None
     
-  def get_dict(self):
+  def get_data(self, is_json=False):
+    """
+    Returns product information as dict by default. As JSON if 'json' flag is set.
+    """
+    if is_json is True:
+      return json.dumps(self.__dict__)
     return self.__dict__

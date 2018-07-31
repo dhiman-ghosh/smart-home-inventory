@@ -18,7 +18,7 @@
  */
 var app = {
 				// Application Server
-				SERVER: 'http://192.168.1.11',
+				SERVER: 'http://192.168.137.1:5000',
 				API_PATH: '/api/v1',
     // Application Constructor
     initialize: function() {
@@ -44,6 +44,7 @@ var app = {
       var preLoadElement = parentElement.querySelector('.pre-load');
       var preLoginElement = parentElement.querySelector('.pre-login');
       var postLoginElement = parentElement.querySelector('.post-login');
+      var dynamicElement = parentElement.querySelector('.dynamic-content');
           
       if (state == 'ready') {
           preLoadElement.setAttribute('style', 'display:none;');
@@ -54,12 +55,15 @@ var app = {
           preLoadElement.setAttribute('style', 'display:none;');
           postLoginElement.setAttribute('style', 'display:block;');
           preLoginElement.setAttribute('style', 'display:none;');
+          dynamicElement.setAttribute('style', 'display:none;');
       } else if (state == 'product') {
-      				$('#main').html(html);
-      				$(document).on('submit', '#api', function(e){
-    								e.preventDefault();
-    								app.httpAction($(this).attr('action'), app.onProductUpdate, 'PUT', $(this).serialize());
-    						});
+          $('#dynamic').html(html);
+          postLoginElement.setAttribute('style', 'display:none;');
+          dynamicElement.setAttribute('style', 'display:block;');
+          $(document).on('submit', '#api', function(e){
+                e.preventDefault();
+                app.httpAction($(this).attr('action'), app.onProductUpdate, 'PUT', $(this).serialize());
+            });
       }
     },
     
@@ -76,7 +80,7 @@ var app = {
     				uri = "/";
     				buttons = ['Add', 'Cancel'];
     				app.httpAction(app.API_PATH + '/product/' + code, function(res) {
-    								if (res.data.name !== null) {
+    								if (res.data.is_present === true) {
     												title = res.data.name + ' (' + res.data.measurement + ')';
     												buttons = ['Remove', 'Cancel', 'Add'];
     								}
@@ -114,6 +118,7 @@ var app = {
                 results.data.name,             // title
                 'OK'                           // buttonName
         				 );
+                 app.receivedEvent('authorized');
     					} else {
     								navigator.notification.beep();
     								navigator.notification.alert(

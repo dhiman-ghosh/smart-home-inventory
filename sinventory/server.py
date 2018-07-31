@@ -58,8 +58,8 @@ def logout():
 @app.route('/product/<barcode>')
 def product(barcode):
   # Fetch product goes here
-  product = dbproduct.Product(barcode)
-  product_data = product.get_dict()
+  product = dbproduct.Product(barcode, use_gs1_api=False)
+  product_data = product.get_data()
   #product_data={'name': 'Lassi', 'company': 'Amul',
   #    'category': 'stationary', 'price': '15', 'measurement': '100 ml'}
   product_data = render_template('product.inc',
@@ -91,7 +91,9 @@ def manage_product(action):
   redirect = False
 
   if request.method == 'GET':
-    return Response('{"name": null, "measurement": "100ml"}');
+    product = dbproduct.Product(action)
+    product_data = product.get_data(is_json=True)
+    return Response(product_data);
   elif request.method == 'POST':
     if action == "insert":
       method = 'PUT'
