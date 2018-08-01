@@ -122,9 +122,11 @@ class Product(database.Database):
     ret.update({'error': 'Failed to delete from DB'})
     return json.dumps(ret)
 
-  def update(self):
+  def update(self, update_dict=None):
     ret = dict()
-    if self._delete(self.__dict__, {"gtin": self.gtin}):
+    if update_dict is None:
+      update_dict = self.__dict__
+    if self._update(update_dict, {"gtin": self.gtin}):
       ret.update({'status': 'OK'})
       ret.update({'name': self.name})
       return json.dumps(ret)

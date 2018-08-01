@@ -31,12 +31,15 @@ class Database:
 
     def _insert(self):
         values = list()
+        keys = ""
         query = None
         dict_ = self.__format_db_attributes(self.__dict__)
         for key, value in dict_.items():
+            keys = keys + key + ","
             values.append(value)
+        keys = keys.rstrip(',')
         values = str(str(values).rstrip(']')).lstrip( '[' )
-        query = "INSERT INTO " + self._table_name + " VALUES (" + values + ");"
+        query = "INSERT INTO " + self._table_name + " (" + keys + ") VALUES (" + values + ");"
         print("Query: " + query)
         res = self.__execute(query, False)
         list1 = (res.split())
@@ -52,7 +55,7 @@ class Database:
         separator = "' and"
       conditn = ""
       for key, value in condition_dict.items():
-        conditn += key + "= '" + value
+        conditn += key + "='" + value
       query = "UPDATE " + self._table_name + " SET " + values + "'" + " WHERE " + conditn + "';"
       print("Query: " + query)
       res = self.__execute(query, False)
@@ -63,7 +66,7 @@ class Database:
     def _delete(self, condition: dict):
         conditn = ""
         for key, value in condition.items():
-          conditn += key + "= '" + value
+          conditn += key + "='" + value
         query = "DELETE FROM " + self._table_name + " WHERE " + conditn + "';"
         print("Query: " + query)
         res = self.__execute(query, False)
@@ -81,7 +84,7 @@ class Database:
       separator = ""
       conditn = ""
       for key, value in condition.items():
-        conditn += separator + key + "= '" + value
+        conditn += separator + key + "='" + value
         separator = "' and"
       query = "SELECT " + keys + " FROM " + self._table_name + " WHERE " + conditn + "';"
       print("Query: " + query)

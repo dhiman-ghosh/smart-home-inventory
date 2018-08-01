@@ -126,13 +126,19 @@ def manage_stock(action):
   try:
     barcode = request.form['barcode']
     quantity = request.form['quantity']
+    product = dbproduct.Product(barcode)
+    new_stock = 0
   except KeyError:
     return Response('{"status": "Bad Request"}', status=400)
   
   if action == "add":
-    return Response('{"status": "OK", "action": "add"}')
+    new_stock = int(product.stock) + int(quantity)
   elif action == "remove":
-    return Response('{"status": "NOTOK", "error": "Test Error"}')
+    new_stock = int(product.stock) - int(quantity)
+    if new_stock < 0:
+      new_stock = 0
+    
+  return Response(product.update({'stock': str(new_stock)}))
 
 if __name__ == "__main__":
   app.run(host='0.0.0.0', debug=True)

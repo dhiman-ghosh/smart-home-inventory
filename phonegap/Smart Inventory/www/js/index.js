@@ -18,7 +18,7 @@
  */
 var app = {
 				// Application Server
-				SERVER: 'http://192.168.1.11',
+				SERVER: 'http://192.168.137.1:5000',
 				API_PATH: '/api/v1',
     // Application Constructor
     initialize: function() {
@@ -79,15 +79,17 @@ var app = {
     barcodeHandler: function(code) {
     				title = "New Product";
     				uri = "/";
+            msg = "Enter Quantity";
     				buttons = ['Add', 'Cancel'];
     				app.httpAction(app.API_PATH + '/product/' + code, function(res) {
     								if (res.data.is_present === true) {
     												title = res.data.name + ' (' + res.data.measurement + ')';
     												buttons = ['Remove', 'Cancel', 'Add'];
+                            msg = msg + ' (' + res.data.stock + ' available)';
     								}
     									
     								navigator.notification.prompt(
-                "Enter Quantity",                   // message
+                msg,                   // message
                 function(r) {
                 				if (res.data.is_present === true) {
 				                		if (r.buttonIndex === 1) {        // remove
