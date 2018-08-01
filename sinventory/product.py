@@ -22,6 +22,9 @@ class Product(database.Database):
     self.measurement = ''
     self.mrp = ''
     self.stock = 0
+    #self.last_added = ''
+    #self.last_removed = ''
+    #self.alexa_id = alexa.id
 
     self._is_present = True
     

@@ -59,6 +59,7 @@ def logout():
 def product(barcode):
   # Fetch product goes here
   product = dbproduct.Product(barcode, use_gs1_api=True)
+  product.stock = request.args.get('stock', product.stock)
   product_data = product.get_data()
   product_data = render_template('product.inc',
       barcode=barcode, data=product_data, action='insert')
@@ -112,7 +113,7 @@ def manage_product(action):
     product.category = request.form['category']
     product.measurement = request.form['measurement']
     product.mrp = request.form['mrp']
-    product.stock = 0
+    product.stock = request.form['stock']
     return Response(product.add())
   elif method == "PATCH":
     return '{"status": "OK"}'
