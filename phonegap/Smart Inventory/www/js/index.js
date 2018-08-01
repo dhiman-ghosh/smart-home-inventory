@@ -18,7 +18,7 @@
  */
 var app = {
 				// Application Server
-				SERVER: 'http://192.168.137.1:5000',
+				SERVER: 'http://192.168.1.11',
 				API_PATH: '/api/v1',
     // Application Constructor
     initialize: function() {
@@ -39,7 +39,7 @@ var app = {
         app.receivedEvent('ready');
     },
     // Update DOM on a Received Event
-    receivedEvent: function(state, html = null) {
+    receivedEvent: function(state, html=null) {
       var parentElement = document.getElementById('content');
       var preLoadElement = parentElement.querySelector('.pre-load');
       var preLoginElement = parentElement.querySelector('.pre-login');
@@ -69,6 +69,7 @@ var app = {
     },
     
     htmlHandler: function (results) {
+    	alert('here');
     				app.receivedEvent('product', results.data);
     				//$('form#api').on('submit', function(e){
 							//		e.preventDefault();
@@ -76,7 +77,9 @@ var app = {
 							//});
     },
     
-    barcodeHandler: function(code) {
+    barcodeHandler: function(code, referrer) {
+    			switch (referrer) {
+    				case "stock":
     				title = "New Product";
     				uri = "/";
             msg = "Enter Quantity";
@@ -100,7 +103,8 @@ var app = {
                               return;
                             }
                 				} else if (r.buttonIndex === 1) {        // add new product
-				                				app.httpAction('/product/' + code + '?app=1', app.htmlHandler);
+				                				app.httpAction('/product/' + code + '?app=1&stock=' +
+				                																		r.input1, app.htmlHandler);
 				                				return;
 				             			} else {  // cencel
 				             							return;
@@ -113,7 +117,25 @@ var app = {
                 buttons,    // buttonLabels
                 '1'         // defaultText
             	);
-    				});			
+    				});
+    				break;
+    				
+    				case "profile":
+    				break;
+    				
+    				case "query":
+    				break;
+    				
+    				case "product":
+    				app.httpAction('/product/' + code + '?app=1', app.htmlHandler);
+    				break;
+    				
+    				case "report":
+    				break;
+    				
+    				default:
+    				break;
+    		}			
     },
     
     onProductUpdate: function (results) {
@@ -142,7 +164,7 @@ var app = {
                 results.data.error,         // message
                 'Could not modify stock!',  // title
                 'OK'                     // buttonName
-        				 );
+       				 );
     					} else {
     								navigator.notification.beep();
     								app.scanBarcode();
@@ -150,24 +172,32 @@ var app = {
     },
     
     stock: function() {
-    					app.scanBarcode('/stock/add');
+    					app.scanBarcode('stock');
     },
     
-    manage: function() {
-    					upc = app.scanBarcode(null);
+    product: function() {
+    					app.scanBarcode('product');
+    },
+    
+    report: function() {
+    					app.scanBarcode('report');
+    },
+    
+    profile: function() {
+    					upc = app.scanBarcode('profile');
     },
     
     query: function() {
-    					upc = app.scanBarcode(null);
+    					upc = app.scanBarcode('query');
     },
     
-    scanBarcode: function() {
+    scanBarcode: function(referrer) {
         cordova.plugins.barcodeScanner.scan(
             function (result) {
             				if (result.cancelled == true) {
             								return null;
             				} else {
-            								app.barcodeHandler(result.text);
+            								app.barcodeHandler(result.text, referrer);
             				}
             },
             function (error) {
