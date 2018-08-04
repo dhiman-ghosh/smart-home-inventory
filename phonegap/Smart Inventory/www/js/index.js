@@ -18,7 +18,7 @@
  */
 var app = {
 				// Application Server
-				SERVER: 'http://192.168.1.11',
+				SERVER: 'https://smart-home-inventory.herokuapp.com/',
 				API_PATH: '/api/v1',
     // Application Constructor
     initialize: function() {
