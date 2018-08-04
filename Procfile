@@ -1,1 +1,1 @@
-web: env PYTHONPATH=$PYTHONPATH:$PWD gunicorn server:app
+web: env PYTHONPATH=$PYTHONPATH:$PWD gunicorn sinventory.server:app
