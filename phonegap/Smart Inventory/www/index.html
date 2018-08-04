@@ -166,7 +166,7 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 			<div class="avatar"><i class="material-icons">line_weight</i></div>
 			<div class="form-group">
 				<button type="button" id="stock" class="btn-success btn-block btn-lg">Manage Stock</button>
-				<button type="button" id="manage" class="btn-primary btn-block btn-lg">Manage Product</button>
+				<button type="button" id="product" class="btn-primary btn-block btn-lg">Manage Product</button>
 				<button type="button" id="report" class="btn-primary btn-block btn-lg">Stock Report</button>
 				<button type="button" id="query" class="btn-primary btn-block btn-lg">Stock Query</button>
 				<button type="button" id="profile" class="btn-primary btn-block btn-lg">Manage Profile</button>
@@ -178,8 +178,8 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 		Say <i><a href="#">Alexa, ask inventory to tell my access key</a></i>
 		</div>
 	</div>
-  <div class="dynamic-content" id="dynamic" style="display:none;">
-  </div>
+	<div class="dynamic-content" id="dynamic" style="display:none;">
+	</div>
 	</div> <!-- close of content div -->
 	<script type="text/javascript" src="cordova.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
@@ -192,8 +192,8 @@ Copyright (c) 2012-2019 WanderingCouple.in. All rights reserved.
 		$('button#stock').click(function(e){
 			app.stock();
 		});
-		$('button#manage').click(function(e){
-			app.manage();
+		$('button#product').click(function(e){
+			app.product();
 		});
 		$('button#report').click(function(e){
 			app.report();
