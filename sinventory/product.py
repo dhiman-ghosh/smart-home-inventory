@@ -21,7 +21,7 @@ class Product(database.Database):
     self.category = ''
     self.measurement = ''
     self.mrp = ''
-    self.stock = 0
+    self.stock = '0'
     self.alexa_id = 'NOT_IMPLEMENTED'
     #self.last_added = ''
     #self.last_removed = ''
@@ -43,17 +43,17 @@ class Product(database.Database):
     result = (self._select(list(self.__dict__.keys()), {"gtin": self.gtin}))
     print(result)
 
+    if len(result) <= 0:
+      return None
+
     self.name = result.get('name')
     self.brand = result.get('brand')
     self.category = result.get('category')
     self.measurement = result.get('measurement')
     self.mrp = result.get('mrp')
     self.stock = result.get('stock')
+    return True
 
-    if len(result) > 0:
-      return True
-    else:
-      return None
 
 
   def __update_gs1_product_details(self):

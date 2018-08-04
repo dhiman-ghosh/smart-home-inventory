@@ -2,7 +2,7 @@
 {% set company = data['brand'] %}
 {% set name = data['name'] %}
 {% set category = data['category'] %}
-{% set price = data['price'] %}
+{% set price = data['mrp'] %}
 {% set measurement = data['measurement'] %}
 {% set stock = data['stock'] %}
 {% else %}
@@ -33,6 +33,7 @@
           <input type="hidden" name="stock" class="form-control" value="{{stock}}">
         </div>
         <input type="submit" class="btn btn-primary btn-block btn-lg" value="Confirm">              
+        <input type="button" id="cancel" class="btn btn-primary btn-block btn-lg" value="Cancel">
     </form>     
   <div class="text-center small">
     Product already updated? <i><a href="#">Click here to update stock</a></i>
