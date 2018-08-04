@@ -1,1 +1,1 @@
-web: gunicorn server:app
+web: env PYTHONPATH=$PYTHONPATH:$PWD gunicorn server:app
