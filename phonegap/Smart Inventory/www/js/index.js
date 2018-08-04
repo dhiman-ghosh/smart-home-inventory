@@ -127,6 +127,17 @@ var app = {
             break;
 
             case "query":
+            app.httpAction(app.API_PATH + '/product/' + code, function(res) {
+                title = res.data.name + ' (' + res.data.measurement + ')';
+                if (res.data.is_present === true) {
+                    navigator.notification.alert(
+                        'Brand: ' + res.data.brand + '\nStock: ' + res.data.stock, // message
+                        null,
+                        title,             // title
+                        'Ok'                           // buttonName
+                    );
+                }
+            });
             break;
 
             case "product":
