@@ -18,6 +18,7 @@
 */
 var app = {
     // Application Server
+    // SERVER: 'http://192.168.1.11',
     SERVER: 'https://smart-home-inventory.herokuapp.com',
     API_PATH: '/api/v1',
     
@@ -67,17 +68,20 @@ var app = {
             $(document).on('submit', '#api', function(e){
                 e.preventDefault();
                 var uri = app.API_PATH + "/product/" + $(this).find("input[name='barcode']").val()
-                app.httpAction(uri, app.onProductUpdate, 'PUT', $(this).serialize());
+                app.httpAction(uri, app.onProductUpdate, null, 'PUT', $(this).serialize());
+            });
+            $(document).on('click', '#cancel', function(e){
+                app.receivedEvent('authorized');
             });
         }
     },
 
     htmlHandler: function (results) {
-        app.receivedEvent('product', results.data);
+        app.receivedEvent(results.landing, results.data);
     },
 
-    barcodeHandler: function(code, referrer) {
-        switch (referrer) {
+    barcodeHandler: function(code, landing) {
+        switch (landing) {
             case "stock":
             title = "New Product";
             uri = "/";
@@ -103,14 +107,14 @@ var app = {
                             }
                         } else if (r.buttonIndex === 1) {        // add new product
                             app.httpAction('/product/' + code + '?app=1&stock=' +
-                                           r.input1, app.htmlHandler);
+                                           r.input1, app.htmlHandler, 'product');
                             return;
                         } else {  // cencel
                             return;
                         }	   
 
                         data = {barcode: code, quantity: r.input1};
-                        app.httpAction(uri, app.onStockUpdate, 'POST', data);
+                        app.httpAction(uri, app.onStockUpdate, null, 'POST', data);
                     },
                     title,      // title
                     buttons,    // buttonLabels
@@ -126,7 +130,7 @@ var app = {
             break;
 
             case "product":
-            app.httpAction('/product/' + code + '?app=1', app.htmlHandler);
+            app.httpAction('/product/' + code + '?app=1', app.htmlHandler, landing);
             break;
 
             case "report":
@@ -183,20 +187,20 @@ var app = {
     },
 
     profile: function() {
-        upc = app.scanBarcode('profile');
+        app.scanBarcode('profile');
     },
 
     query: function() {
-        upc = app.scanBarcode('query');
+        app.scanBarcode('query');
     },
 
-    scanBarcode: function(referrer) {
+    scanBarcode: function(landing) {
         cordova.plugins.barcodeScanner.scan(
             function (result) {
                 if (result.cancelled == true) {
                     return null;
                 } else {
-                    app.barcodeHandler(result.text, referrer);
+                    app.barcodeHandler(result.text, landing);
                 }
             },
             function (error) {
@@ -236,7 +240,7 @@ var app = {
         });
     },
 
-    httpAction: function (resource, callback, method = 'GET', data = null) {
+    httpAction: function (resource, callback, landing=null, method = 'GET', data = null) {
         datatype = "json";
         if (resource.indexOf(app.API_PATH) === -1) {
             datatype = "html";
@@ -251,7 +255,7 @@ var app = {
                 if (callback != null) {
                     var resp = new Object();
                     resp.data = data;
-                    resp.resource = resource;
+                    resp.landing = landing;
                     callback(resp);
                 }
             },
