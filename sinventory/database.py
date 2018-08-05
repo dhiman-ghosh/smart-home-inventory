@@ -28,6 +28,13 @@ class Database:
           pass
       return new_ds
 
+    def _setup(self):
+      query = "CREATE TABLE IF NOT EXISTS profile (alexa_id VARCHAR(256) NOT NULL UNIQUE, pin INT NOT NULL UNIQUE, name VARCHAR(50), email VARCHAR(355), mobile BIGINT, PRIMARY KEY(alexa_id));"
+      res = self.__execute(query, False)
+      query = "CREATE TABLE IF NOT EXISTS product (gtin VARCHAR(32) NOT NULL UNIQUE, brand VARCHAR(64) NOT NULL, name VARCHAR(64)  NOT NULL, category VARCHAR(50), measurement VARCHAR(10), \
+          mrp INT, stock INT, last_added date, last_removed date,  alexa_id VARCHAR(256) REFERENCES profile(alexa_id), PRIMARY KEY(gtin));"
+      res = self.__execute(query, False)
+      return True
 
     def _insert(self):
         values = list()
@@ -51,7 +58,7 @@ class Database:
       values = ""
       value_dict = self.__format_db_attributes(value_dict)
       for key, value in value_dict.items():
-        values += separator + key + "= '" + value
+        values += separator + key + "= '" + str(value)
         separator = "' and"
       conditn = ""
       for key, value in condition_dict.items():
@@ -88,16 +95,40 @@ class Database:
         separator = "' and"
       query = "SELECT " + keys + " FROM " + self._table_name + " WHERE " + conditn + "';"
       print("Query: " + query)
-      values = self.__execute(query, True)
-      res = dict(zip(key_list, values))
+      res = self.__execute(query, True)
+      #res = dict(zip(key_list, values))
       return res
+
+    def _search(self, query: dict):
+      keys = ""
+      dict_ = self.__format_db_attributes(self.__dict__)
+      for key, value in dict_.items():
+        keys = keys + key + ","
+      keys = keys.rstrip(',')
+      separator = ""
+      conditn = ""
+      for key, value in query.items():
+        conditn += separator + "LOWER(" + key + ") LIKE LOWER('%" + value
+        separator = "%') and"
+      query = "SELECT " + keys + " FROM " + self._table_name + " WHERE " + conditn +  "%');"
+      print("Query: " + query)
+      res = self.__execute(query, True)
+      return res
+
 
     def __execute(self, query, fetch):
         cur = Database.conn.cursor()
         cur.execute(query)
         if fetch is True:
-          #data = cur.fetchall()
-          data = list(sum(cur.fetchall(), ()))
+          ncols = len(cur.description)
+          colnames = [cur.description[i][0] for i in range(ncols)]
+          data = []
+          for row in cur.fetchall():
+             res = {}
+             for i in range(ncols):
+                res[colnames[i]] = row[i]
+             data.append(res)
+          #print(data)
           Database.conn.commit()
           return data
         else:

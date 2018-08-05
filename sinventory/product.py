@@ -13,7 +13,7 @@ headers = {
 }
 
 class Product(database.Database):
-  def __init__(self, barcode, use_gs1_api=False):
+  def __init__(self, barcode=None, use_gs1_api=False):
     super().__init__("product")
     self.gtin = barcode
     self.brand = ''
@@ -27,36 +27,42 @@ class Product(database.Database):
     #self.last_removed = ''
 
     self._is_present = True
-    
-    if self.__update_product_details() is None:
+
+    if self.load() is None:
       self._is_present = False
       if use_gs1_api is True:
         self.__update_gs1_product_details()
       
-  def __update_product_details(self):
+  def load(self, data=None):
     """
     Checks if product already present in DB, if present, update the members
     
     Returns:
       True if present, None if does not exist, False for DB errors
     """
-    result = (self._select(list(self.__dict__.keys()), {"gtin": self.gtin}))
-    print(result)
+    if data is None:
+      if self.gtin is None:
+        return False
+      data = (self._select(list(self.__dict__.keys()), {"gtin": self.gtin}))
 
-    if len(result) <= 0:
+    print(data)
+
+    if len(data) <= 0:
       return None
 
-    self.name = result.get('name')
-    self.brand = result.get('brand')
-    self.category = result.get('category')
-    self.measurement = result.get('measurement')
-    self.mrp = result.get('mrp')
-    self.stock = result.get('stock')
+    data = data[0]
+    self.name = data.get('name')
+    self.brand = data.get('brand')
+    self.category = data.get('category')
+    self.measurement = data.get('measurement')
+    self.mrp = data.get('mrp')
+    self.stock = data.get('stock')
     return True
 
-
-
   def __update_gs1_product_details(self):
+    if self.gtin is None:
+      return False
+
     query = 'format=json;'
     query += 'gtin=' + str(self.gtin) + ';'
     query += 'imei=863406032103645;'
@@ -68,7 +74,7 @@ class Product(database.Database):
     response = requests.get(full_url, headers=headers)
 
     if response.status_code == 200:
-      print(str(response.content))
+      #print(str(response.content))
       data = json.loads(response.content.decode())
       self.name = data[0].get('name')
       if "not provided" in self.name:
@@ -89,7 +95,7 @@ class Product(database.Database):
       if 'mrp' in data[0]:
         self.mrp = data[0]['mrp'][0].get('mrp')
       
-    return None
+    return True
 
   @property
   def is_present(self):
@@ -136,3 +142,17 @@ class Product(database.Database):
     ret.update({'status': 'FAILURE'})
     ret.update({'error': 'Failed to update from DB'})
     return json.dumps(ret)
+
+  def search(self, item):
+    column = 'name'
+    ret = self._search({column: item})
+
+    if ret is None:
+      column = 'category'
+      ret = self._search({column: item})
+
+    if ret is None:
+      column = 'brand'
+      ret = self._search({column: item})
+
+    return ret, column

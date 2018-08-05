@@ -23,9 +23,16 @@
           <input type="text" name="company" class="form-control" placeholder="Company Name" value="{{company}}"required="required">
           <input type="text" name="name" class="form-control" placeholder="Product Name" value="{{name}}" required="required">
           <select class="form-control" id="category" placeholder="Product Category" name="category">
-            <option value="food">Food</option>
+            <option value="biscuits">Biscuits</option>
+            <option value="noodles">Noodles</option>
+            <option value="spices">Spices</option>
+            <option value="grocery">Grocery</option>
+            <option value="foods">Foods</option>
+            <option value="drinks">Drinks</option>
+            <option value="medicine">Medicine</option>
             <option value="stationary">Stationary</option>
-            <option value="household">Household</option>
+            <option value="sanitary">Sanitary</option>
+            <option value="water">Water</option>
             <option value="others">Others</option>
           </select>
           <input type="text" name="measurement" class="form-control" placeholder="Measurement" value="{{measurement}}" required="required">
