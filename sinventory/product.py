@@ -1,3 +1,4 @@
+import sys
 import json
 import requests
 
@@ -31,7 +32,18 @@ class Product(database.Database):
     if self.load() is None:
       self._is_present = False
       if use_gs1_api is True:
-        self.__update_gs1_product_details()
+        error_msg = None
+        try:
+          self.__update_gs1_product_details()
+        except AttributeError as ex:
+          error_msg = str(ex)
+        except ValueError as ex:
+          error_msg = str(ex)
+        except KeyError as ex:
+          error_msg = str(ex)
+
+        if error_msg is not None:
+          print(str(e), file=sys.stderr)
       
   def load(self, data=None):
     """
@@ -43,14 +55,13 @@ class Product(database.Database):
     if data is None:
       if self.gtin is None:
         return False
-      data = (self._select(list(self.__dict__.keys()), {"gtin": self.gtin}))
+      data = self._select(list(self.__dict__.keys()), {"gtin": self.gtin})[0]
+
+    if data is None or data is False:
+      return None
 
     print(data)
 
-    if len(data) <= 0:
-      return None
-
-    data = data[0]
     self.name = data.get('name')
     self.brand = data.get('brand')
     self.category = data.get('category')
@@ -118,7 +129,7 @@ class Product(database.Database):
       ret.update({'name': self.name})
       return json.dumps(ret)
     ret.update({'status': 'FAILURE'})
-    ret.update({'error': 'Failed to add into DB'})
+    ret.update({'error': self._error})
     return json.dumps(ret)
 
   def remove(self):
@@ -128,7 +139,7 @@ class Product(database.Database):
       ret.update({'name': self.name})
       return json.dumps(ret)
     ret.update({'status': 'FAILURE'})
-    ret.update({'error': 'Failed to delete from DB'})
+    ret.update({'error': self._error})
     return json.dumps(ret)
 
   def update(self, update_dict=None):
@@ -140,7 +151,7 @@ class Product(database.Database):
       ret.update({'name': self.name})
       return json.dumps(ret)
     ret.update({'status': 'FAILURE'})
-    ret.update({'error': 'Failed to update from DB'})
+    ret.update({'error': self._error})
     return json.dumps(ret)
 
   def search(self, item):

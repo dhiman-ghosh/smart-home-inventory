@@ -87,7 +87,7 @@ def authorize(pin):
   else:
     return Response('{"status": "Unauthorized"}', status=401)
 
-@app.route(API + '/product/<action>', methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+@app.route(API + '/product/<action>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def manage_product(action):
   method = request.method
   redirect = False
@@ -102,7 +102,7 @@ def manage_product(action):
       method = 'PUT'
       redirect = True
     elif action == "update":
-      method = 'PATCH'
+      method = 'PUT'
       redirect = True
     elif action == "delete":
       method = 'DELETE'
@@ -117,6 +117,8 @@ def manage_product(action):
     product.measurement = request.form['measurement']
     product.mrp = request.form['mrp']
     product.stock = request.form['stock']
+    if product._is_present:
+      return Response(product.update())
     return Response(product.add())
   elif method == "PATCH":
     return '{"status": "OK"}'
