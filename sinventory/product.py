@@ -41,6 +41,8 @@ class Product(database.Database):
           error_msg = str(ex)
         except KeyError as ex:
           error_msg = str(ex)
+        except IndexError as ex:
+          error_msg = str(ex)
 
         if error_msg is not None:
           print(str(e), file=sys.stderr)
