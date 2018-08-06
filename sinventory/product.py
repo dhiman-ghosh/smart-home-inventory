@@ -45,7 +45,7 @@ class Product(database.Database):
           error_msg = str(ex)
 
         if error_msg is not None:
-          print(str(e), file=sys.stderr)
+          print(error_msg, file=sys.stderr)
       
   def load(self, data=None):
     """
