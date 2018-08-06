@@ -40,6 +40,14 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
+        $(document).on('submit', '#api', function(e){
+            e.preventDefault();
+            var uri = app.API_PATH + "/product/" + $(this).find("input[name='barcode']").val()
+            app.httpAction(uri, app.onProductUpdate, null, 'PUT', $(this).serialize());
+        });
+        $(document).on('click', '#cancel', function(e){
+            app.receivedEvent('authorized');
+        });
         app.receivedEvent('ready');
     },
     
@@ -65,14 +73,6 @@ var app = {
             $('#dynamic').html(html);
             postLoginElement.setAttribute('style', 'display:none;');
             dynamicElement.setAttribute('style', 'display:block;');
-            $(document).on('submit', '#api', function(e){
-                e.preventDefault();
-                var uri = app.API_PATH + "/product/" + $(this).find("input[name='barcode']").val()
-                app.httpAction(uri, app.onProductUpdate, null, 'PUT', $(this).serialize());
-            });
-            $(document).on('click', '#cancel', function(e){
-                app.receivedEvent('authorized');
-            });
         }
     },
 
@@ -154,8 +154,13 @@ var app = {
 
     onProductUpdate: function (results) {
         if (results.data.status === 'OK') {
+            if (results.data.is_present === true) {
+                var msg = 'Product Updated Successfully!';
+            } else {
+                var msg = 'Product Added Successfully!';
+            }
             navigator.notification.alert(
-                'Product Added Successfully!', // message
+                msg,                           // message
                 null,
                 results.data.name,             // title
                 'Ok'                           // buttonName
