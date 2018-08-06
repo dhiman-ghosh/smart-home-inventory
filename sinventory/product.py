@@ -55,10 +55,12 @@ class Product(database.Database):
     if data is None:
       if self.gtin is None:
         return False
-      data = self._select(list(self.__dict__.keys()), {"gtin": self.gtin})[0]
+      data = self._select(list(self.__dict__.keys()), {"gtin": self.gtin})
 
     if data is None or data is False:
       return None
+    elif isinstance(data, list):
+      data = data[0]
 
     print(data)
 
@@ -127,8 +129,10 @@ class Product(database.Database):
     if self._insert():
       ret.update({'status': 'OK'})
       ret.update({'name': self.name})
+      ret.update({'is_present': self.is_present})
       return json.dumps(ret)
     ret.update({'status': 'FAILURE'})
+    ret.update({'is_present': self.is_present})
     ret.update({'error': self._error})
     return json.dumps(ret)
 
@@ -149,8 +153,10 @@ class Product(database.Database):
     if self._update(update_dict, {"gtin": self.gtin}):
       ret.update({'status': 'OK'})
       ret.update({'name': self.name})
+      ret.update({'is_present': self.is_present})
       return json.dumps(ret)
     ret.update({'status': 'FAILURE'})
+    ret.update({'is_present': self.is_present})
     ret.update({'error': self._error})
     return json.dumps(ret)
 
