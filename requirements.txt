@@ -1,6 +1,7 @@
 cryptography==2.1.4
-gunicorn==19.8.1
-Flask_Ask==0.9.8
+inflect==1.0.0
 Flask==0.12.1
-requests==2.19.1
+Flask_Ask==0.9.8
+gunicorn==19.8.1
 psycopg2-binary==2.7.5
+requests==2.19.1
