@@ -31,7 +31,7 @@ class Product(database.Database):
 
     if self.load() is None:
       self._is_present = False
-      if use_gs1_api is True:
+      if use_gs1_api is True and not self.gtin.startswith('8901234'):
         error_msg = None
         try:
           self.__update_gs1_product_details()
