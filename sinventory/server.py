@@ -167,5 +167,20 @@ def ask_stock_query(item):
   ask_handler = alexa.Alexa(context)
   return ask_handler.stock_query(item)
 
+@ask.intent('AMAZON.FallbackIntent')
+def default():
+  ask_handler = alexa.Alexa(context)
+  return ask_handler.default()
+
+@ask.intent('AMAZON.YesIntent')
+def default():
+  ask_handler = alexa.Alexa(context)
+  return ask_handler.default_yes()
+
+@ask.intent('AMAZON.NoIntent')
+def default():
+  ask_handler = alexa.Alexa(context)
+  return ask_handler.default_no()
+
 if __name__ == "__main__":
   app.run(host='0.0.0.0', debug=True)

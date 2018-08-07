@@ -1,5 +1,5 @@
 import inflect
-from flask_ask import statement
+from flask_ask import statement, question
 
 from sinventory import product as dbproduct
 from sinventory import profile as dbprofile
@@ -37,3 +37,14 @@ class Alexa:
       msg = product.brand + ' ' + product.name + ' has ' + str(product.stock) + ' quantities in stock'
     
     return statement(msg)
+
+  def default(self):
+    qs = "Sorry, did not get what is your inventory query. Do you want me to search some product in stock?"
+    return question(qs)
+
+  def default_yes(self):
+    qs = "Simply ask, stock for your product. For example, stock for biscuits."
+    return question(qs)
+
+  def default_no(self):
+    return statement('Okay')
